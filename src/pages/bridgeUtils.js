@@ -13,12 +13,12 @@ export async function bridgeTokens(
     return burnTokensOnEth(amount, destinationChain);
   } else if (walletType === "SuiWallet") {
     const burnResult = await burnTokensOnSui(amount, currentAccount);
-    console.log("Minting tokens on Ethereum...");
+    console.log("Minting tokens on Ethereum");
     const mintResult = await mintTokensOnEth(recvAddress, amount);
     console.log("Minting complete:", mintResult);
     return { burnResult, mintResult };
   } else {
-    throw new Error("Unsupported wallet type");
+    throw new Error("Unsupported wallet");
   }
 }
 
@@ -45,10 +45,10 @@ async function mintTokensOnEth(recvAddress, amount) {
     }
 
     const result = await mintResponse.json();
-    console.log("Mint for Bridge Transaction Successful via server:", result);
+    console.log("Mint Successfull:", result);
     return result;
   } catch (error) {
-    console.error("Error minting tokens on Ethereum:", error);
+    console.error("Error minting:", error);
     throw error;
   }
 }
@@ -64,7 +64,7 @@ async function burnTokensOnEth(amount, destinationChain) {
 
     console.log("Connected Address (MetaMask):", userAddress);
 
-    const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+    const contractAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
     const web3 = new Web3(window.ethereum);
 
     const abi = [
@@ -101,18 +101,18 @@ async function burnTokensOnEth(amount, destinationChain) {
     console.log("Burn for Bridge Transaction Successful:", tx);
     return tx;
   } catch (error) {
-    console.error("Error burning tokens on Ethereum:", error);
+    console.error("Error burning tokens:", error);
 
-    // Handle specific errors
+    
     if (error.message.includes("User denied transaction signature")) {
       console.error("Transaction rejected by the user.");
     } else if (error.message.includes("insufficient funds")) {
-      console.error("Insufficient funds for gas or token balance.");
+      console.error("Insufficient funds");
     } else if (error.message.includes("reverted")) {
-      console.error("Transaction reverted. Check contract logic or balance.");
+      console.error("Transaction reverted.");
     }
 
-    throw error; // Re-throw the error for further handling
+    throw error; 
   }
 }
 
@@ -125,7 +125,7 @@ export async function burnTokensOnSui(amount, currentAccount) {
     const userAddress = currentAccount.address;
     const client = new SuiClient({ url: "http://127.0.0.1:9000" });
     const IBTTOKEN_TYPE =
-      "0xc22dc0e937cda4b1c3bb9295edfa4c1c1d8beea553c34a8f2117ecd9876bac87::IBTToken::IBTToken";
+      "0x160d355df1f1b99e2823a2e5266f41d0a080b410adcb61f63b42bc79fc99fb42::IBTToken::IBTToken";
 
     const coins = await client.getCoins({
       owner: userAddress,
@@ -133,12 +133,12 @@ export async function burnTokensOnSui(amount, currentAccount) {
     });
 
     if (!coins.data || coins.data.length === 0) {
-      throw new Error("No IBTToken coins found to burn");
+      throw new Error("No IBTToken coins found");
     }
 
     const coinToBurn = coins.data[0].coinObjectId;
 
-    // Prepare for server call
+    
     const response = await fetch("http://localhost:3000/api/burn", {
       method: "POST",
       headers: {

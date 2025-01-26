@@ -94,11 +94,11 @@ const WalletDashboard = () => {
     try {
       if (theWalletType === "MetaMask") {
         if (!Web3.utils.isAddress(theAddress)) {
-          console.warn("Skipping MetaMask fetch; invalid Ethereum address:", theAddress);
+          console.warn("invalid Ethereum address:", theAddress);
           setIbttBalance("0");
           return;
         }
-        const IBTTOKEN_CONTRACT_ADDRESS = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+        const IBTTOKEN_CONTRACT_ADDRESS = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
         const web3 = new Web3(window.ethereum);
         const contract = new web3.eth.Contract(
           [
@@ -124,7 +124,7 @@ const WalletDashboard = () => {
         }
         const suiClient = new SuiClient({ url: "http://127.0.0.1:9000" });
         const IBTTOKEN_TYPE =
-          "0xc22dc0e937cda4b1c3bb9295edfa4c1c1d8beea553c34a8f2117ecd9876bac87::IBTToken::IBTToken";
+          "0x160d355df1f1b99e2823a2e5266f41d0a080b410adcb61f63b42bc79fc99fb42::IBTToken::IBTToken";
         const result = await suiClient.getBalance({
           owner: theAddress,
           coinType: IBTTOKEN_TYPE,
@@ -185,7 +185,7 @@ const WalletDashboard = () => {
               if (currentAccount && currentAccount.address) {
                 setAddress(currentAccount.address);
               } else {
-                console.warn("No SuiWallet address found after connect attempt.");
+                console.warn("No SuiWallet address found.");
                 setAddress("N/A");
               }
             }, 1000);
@@ -285,7 +285,7 @@ const WalletDashboard = () => {
 
       <div className="wallet-info">
         <label>
-          <strong>Select Wallet:</strong>{" "}
+          <strong>Wallet:</strong>{" "}
           <select value={walletType} onChange={(e) => handleWalletTypeChange(e.target.value)}>
             <option value="Unknown" disabled>
               -- Select a Wallet --

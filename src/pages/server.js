@@ -8,18 +8,15 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend's URL
-    methods: ["GET", "POST"], // Allowed methods
-    allowedHeaders: ["Content-Type"], // Allowed headers
+    origin: "http://127.0.0.1:5173", 
+    methods: ["GET", "POST"], 
+    allowedHeaders: ["Content-Type"], 
   })
 );
 app.use(express.json());
 
 const bridgeScriptPath = "./bridge.sh";
 
-/**
- * Mint tokens via bridge.sh
- */
 app.post("/api/mint", async (req, res) => {
   console.log("MINTING?");
   const { recvAddress, amount, destinationChain } = req.body;
@@ -33,10 +30,10 @@ app.post("/api/mint", async (req, res) => {
   if (destinationChain === "Sui") {
     command = `bash ${bridgeScriptPath} mint ${amount} ${recvAddress} sui`;
   } else if (destinationChain === "Ethereum") {
-    // Use 'eth' for Ethereum minting
+
     command = `bash ${bridgeScriptPath} eth ${amount} ${recvAddress}`;
   } else {
-    return res.status(400).json({ error: "Invalid destination chain" });
+    return res.status(400).json({ error: "Invalid destination" });
   }
 
   try {
